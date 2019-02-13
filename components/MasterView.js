@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Button, TouchableOpacity } from 'react-native';
+import { Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
 import AutoComplete from 'react-native-autocomplete-input';
 import api from '../dataRequests';
 const cityData = require('../data/small.city.list.json');
@@ -21,7 +21,7 @@ export default class MasterView extends Component {
 
     filterAutoCompleteItems(inputText)
     {
-        if(this.state.autoCompleteInput.length < 3)
+        if(this.state.autoCompleteInput.length < 1)
         {
             return [];
         }
@@ -53,22 +53,37 @@ export default class MasterView extends Component {
 
     autoCompleteSelectCity(cityData)
     {
-        //api.getCityWeather(cityData.id).then(weatherData => {            
+        this.setState({
+            autoCompleteInput: ""
+        });
+        api.getCityWeather(cityData.id).then(weatherData => {            
             this.saveCity({
                 cityData,
-               // weatherData                
+                weatherData                
             });
-        //})
+        })
     }
 
     render() {
         const {navigate} = this.props.navigation;
         return (
-        <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}>
-            <View style={{ width: "100%", zIndex: 1}}>
+        <View style={{ 
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+            backgroundColor: "#DDDDFF" 
+            }}>
+            <View style={{ 
+                width: "100%",
+                zIndex: 1,
+                left: 0,
+                position: 'absolute',
+                right: 0,
+                top: 0,                
+                }}>
+            
                 <AutoComplete
-                    data={this.filterAutoCompleteItems(this.state.autoCompleteInput)}
-                    //defaultValue={query}
+                    data={this.filterAutoCompleteItems(this.state.autoCompleteInput)}                    
                     onChangeText={text => this.setState({ autoCompleteInput: text })}
                     renderItem={city => (
                         <TouchableOpacity onPress={() => this.autoCompleteSelectCity(city)}>
@@ -82,11 +97,12 @@ export default class MasterView extends Component {
                     )}
                 />
             </View>
-            <View>
+            <View style={{paddingTop: 40, width: "100%", flex: 1, flexDirection: "column", }}>
                 {
-                    this.state.savedCities.map(city => {
-                        return <WeatherTeaser key={city.cityData.id} data={city} update={this.updateCityWeather}/>
-                })}  
+                    this.state.savedCities.map((city, index) => {
+                        return <WeatherTeaser key={index} data={city} onPress={() => navigate('Detail', { cityData: city.cityData, weatherData: city.weatherData })} />
+                    })
+                }
             </View>
             <Button 
                 title="Detail view"

@@ -7,13 +7,11 @@ export default {
         return new Promise((resolve, reject) => {
            axios.get(`https://api.openweathermap.org/data/2.5/weather?id=${cityId}&APPID=${parameters.openWeatherApiKey}&units=metric`)
                 .then(function (response) {
-                    // handle success
-                    console.log(response);
+                    // handle success                    
                     resolve(response.data);
                 })
                 .catch(function (error) {
-                    // handle error
-                    console.log(error);
+                    // handle error                    
                     reject(error);
                 });     
 
